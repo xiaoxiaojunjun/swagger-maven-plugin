@@ -13,7 +13,8 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.util.ParameterProcessor;
+//import io.swagger.util.ParameterProcessor;
+import io.swagger.util.ParameterProcessorPlugin;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -283,7 +284,8 @@ public class SpringSwaggerExtension extends AbstractSwaggerExtension {
                     if (Strings.isNullOrEmpty(parameter.getName())) {
                         parameter.setName(propertyDescriptor.getDisplayName());
                     }
-                    ParameterProcessor.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
+//                    ParameterProcessor.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
+                    ParameterProcessorPlugin.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
                 }
                 parameters.addAll(propertySetterExtractedParameters);
             }

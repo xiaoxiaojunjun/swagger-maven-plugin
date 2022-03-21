@@ -17,7 +17,8 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-import io.swagger.util.ParameterProcessor;
+//import io.swagger.util.ParameterProcessor;
+import io.swagger.util.ParameterProcessorPlugin;
 import io.swagger.util.PathUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.commons.lang3.text.StrBuilder;
@@ -42,7 +43,7 @@ public abstract class AbstractReader {
     protected List<ResponseMessageOverride> responseMessageOverrides;
 
     protected String operationIdFormat;
-    
+
     /**
      * Supported parameters: {{packageName}}, {{className}}, {{methodName}}, {{httpMethod}}
      * Suggested default value is: "{{className}}_{{methodName}}_{{httpMethod}}"
@@ -360,14 +361,16 @@ public abstract class AbstractReader {
 
         if (!parameters.isEmpty()) {
             for (Parameter parameter : parameters) {
-                ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations);
+//                ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations);
+                ParameterProcessorPlugin.applyAnnotations(swagger, parameter, type, annotations);
             }
         } else {
             LOG.debug("Looking for body params in " + cls);
             // parameters is guaranteed to be empty at this point, replace it with a mutable collection
             parameters = Lists.newArrayList();
             if (!typesToSkip.contains(type)) {
-                Parameter param = ParameterProcessor.applyAnnotations(swagger, null, type, annotations);
+//                Parameter param = ParameterProcessor.applyAnnotations(swagger, null, type, annotations);
+                Parameter param = ParameterProcessorPlugin.applyAnnotations(swagger, null, type, annotations);
                 if (param != null) {
                     parameters.add(param);
                 }
@@ -512,7 +515,8 @@ public abstract class AbstractReader {
             return null;
         }
 
-        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
+//        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
+        return ParameterProcessorPlugin.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
     }
 
     void processOperationDecorator(Operation operation, Method method) {
@@ -522,22 +526,22 @@ public abstract class AbstractReader {
             extension.decorateOperation(operation, method, chain);
         }
     }
-    
+
     protected String getOperationId(Method method, String httpMethod) {
   		if (this.operationIdFormat == null) {
   			this.operationIdFormat = OPERATION_ID_FORMAT_DEFAULT;
   		}
-  		
+
   		String packageName = method.getDeclaringClass().getPackage().getName();
   		String className = method.getDeclaringClass().getSimpleName();
   		String methodName = method.getName();
-        
+
   		StrBuilder sb = new StrBuilder(this.operationIdFormat);
   		sb.replaceAll("{{packageName}}", packageName);
   		sb.replaceAll("{{className}}", className);
   		sb.replaceAll("{{methodName}}", methodName);
   		sb.replaceAll("{{httpMethod}}", httpMethod);
-  		
+
   		return sb.toString();
     }
 
