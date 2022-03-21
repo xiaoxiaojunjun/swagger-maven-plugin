@@ -37,7 +37,8 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-import io.swagger.util.ParameterProcessor;
+//import io.swagger.util.ParameterProcessor;
+import io.swagger.util.ParameterProcessorPlugin;
 import io.swagger.util.PathUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -398,14 +399,16 @@ public abstract class AbstractReader {
 
         if (!parameters.isEmpty()) {
             for (Parameter parameter : parameters) {
-                ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations);
+//                ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations);
+                ParameterProcessorPlugin.applyAnnotations(swagger, parameter, type, annotations);
             }
         } else {
             LOG.debug("Looking for body params in " + cls);
             // parameters is guaranteed to be empty at this point, replace it with a mutable collection
             parameters = Lists.newArrayList();
             if (!typesToSkip.contains(type)) {
-                Parameter param = ParameterProcessor.applyAnnotations(swagger, null, type, annotations);
+//                Parameter param = ParameterProcessor.applyAnnotations(swagger, null, type, annotations);
+                Parameter param = ParameterProcessorPlugin.applyAnnotations(swagger, null, type, annotations);
                 if (param != null) {
                     parameters.add(param);
                 }
@@ -550,7 +553,8 @@ public abstract class AbstractReader {
             return null;
         }
 
-        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
+//        return ParameterProcessor.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
+        return ParameterProcessorPlugin.applyAnnotations(swagger, parameter, apiClass, Arrays.asList(new Annotation[]{param}));
     }
 
     void processOperationDecorator(Operation operation, Method method) {

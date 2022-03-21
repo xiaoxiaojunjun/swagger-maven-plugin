@@ -3,7 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.kongchen</groupId>
     <artifactId>swagger-maven-plugin</artifactId>
-    <version>3.1.15-fix-type-error-RELEASE</version>
+    <version>3.1.9-SNAPSHOT</version>
+<!--    <version>3.1.21-extends-RELEASE</version>-->
     <packaging>maven-plugin</packaging>
     <name>Swagger Maven Plugin</name>
     <description>
@@ -467,15 +468,15 @@
     </profiles>
 
     <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>Nexus Release Repository</name>
-            <url>https://maven.rmall.qq.com/repository/maven-releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>https://maven.rmall.qq.com/repository/maven-snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 </project>

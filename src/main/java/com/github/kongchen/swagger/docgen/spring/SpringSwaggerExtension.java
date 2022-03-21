@@ -3,49 +3,33 @@ package com.github.kongchen.swagger.docgen.spring;
 import com.fasterxml.jackson.databind.JavaType;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import io.swagger.annotations.ApiParam;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.models.Swagger;
-import io.swagger.models.parameters.CookieParameter;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.*;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.util.ParameterProcessor;
+//import io.swagger.util.ParameterProcessor;
+import io.swagger.util.ParameterProcessorPlugin;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.springframework.beans.BeanUtils;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.*;
 
 /**
  * @author chekong on 15/4/27.
@@ -268,12 +252,12 @@ public class SpringSwaggerExtension extends AbstractSwaggerExtension {
 
     private List<Parameter> extractParametersFromModelAttributeAnnotation(Type type, Map<Class<?>, Annotation> annotations) {
         ModelAttribute modelAttribute = (ModelAttribute)annotations.get(ModelAttribute.class);
-        if ((modelAttribute == null || !hasClassStartingWith(annotations.keySet(), "org.springframework.web.bind.annotation"))&& BeanUtils.isSimpleProperty(TypeToken.of(type).getRawType())) {
+        if ((modelAttribute == null || !hasClassStartingWith(annotations.keySet(), "org.springframework.web.bind.annotation"))&& BeanUtils.isSimpleProperty(TypeUtils.getRawType(type, null))) {
             return Collections.emptyList();
         }
 
         List<Parameter> parameters = new ArrayList<Parameter>();
-        Class<?> clazz = TypeToken.of(type).getRawType();
+        Class<?> clazz = TypeUtils.getRawType(type, type);
         for (PropertyDescriptor propertyDescriptor : BeanUtils.getPropertyDescriptors(clazz)) {
             // Get all the valid setter methods inside the bean
             Method propertyDescriptorSetter = propertyDescriptor.getWriteMethod();
@@ -300,7 +284,8 @@ public class SpringSwaggerExtension extends AbstractSwaggerExtension {
                     if (Strings.isNullOrEmpty(parameter.getName())) {
                         parameter.setName(propertyDescriptor.getDisplayName());
                     }
-                    ParameterProcessor.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
+//                    ParameterProcessor.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
+                    ParameterProcessorPlugin.applyAnnotations(new Swagger(), parameter, type, Lists.newArrayList(propertySetterApiParam));
                 }
                 parameters.addAll(propertySetterExtractedParameters);
             }
@@ -311,13 +296,12 @@ public class SpringSwaggerExtension extends AbstractSwaggerExtension {
 
     private boolean isRequestParamType(Type type, Map<Class<?>, Annotation> annotations) {
         RequestParam requestParam = (RequestParam) annotations.get(RequestParam.class);
-        Class<?> rawType = TypeToken.of(type).getRawType();
-        return requestParam != null || (BeanUtils.isSimpleProperty(rawType) && !hasClassStartingWith(annotations.keySet(), "org.springframework.web.bind.annotation"));
+        return requestParam != null || (BeanUtils.isSimpleProperty(TypeUtils.getRawType(type, type)) && !hasClassStartingWith(annotations.keySet(), "org.springframework.web.bind.annotation"));
     }
 
     @Override
     public boolean shouldIgnoreType(Type type, Set<Type> typesToSkip) {
-        Class<?> clazz = TypeToken.of(type).getRawType();
+        Class<?> clazz = TypeUtils.getRawType(type, type);
         if (clazz == null) {
             return false;
         }
