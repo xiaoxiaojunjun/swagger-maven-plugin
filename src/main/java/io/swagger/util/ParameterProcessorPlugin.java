@@ -285,15 +285,15 @@ public class ParameterProcessorPlugin {
                         if(obj!=null){
                             String examples = String.valueOf(obj);
                             String returnExample = translateExampleDesc(examples,pValue.getDescription());
-                            if(returnExample.indexOf("&&")!=-1){
-                                String[] values = returnExample.split("&&");
-                                if (values.length == 2) {
-                                    String ptype  = values[0];
-                                    String pdes = values[1];
-                                    returnExample = pdes+" 类型为:"+ptype;
-                                }
-                            }
                             pValue.setDescription(returnExample);
+                        }
+                        if(StringUtils.isNotEmpty(pValue.getDescription()) && pValue.getDescription().indexOf("&&")!=-1){
+                            String[] values = pValue.getDescription().split("&&");
+                            if (values.length == 2) {
+                                String ptype  = values[0];
+                                String pdes = values[1];
+                                pValue.setDescription(pdes+" 类型为:"+ptype);
+                            }
                         }
                     }
 
@@ -351,7 +351,7 @@ public class ParameterProcessorPlugin {
                             if (apiModelProperty != null) {
                                 String value = field.get(object) + ":" + apiModelProperty.value();
                                 //TODO 枚举
-                                temp.append(value).append("\n");
+                                temp.append(value).append(";");
                             }
                         }
                     }

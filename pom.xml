@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.kongchen</groupId>
     <artifactId>swagger-maven-plugin</artifactId>
-    <version>3.1.16-fix-error-RELEASE</version>
+    <version>3.1.18-fix-error-RELEASE</version>
 <!--    <version>3.1.9-SNAPSHOT</version>-->
 <!--    <version>3.1.21-extends-RELEASE</version>-->
     <packaging>maven-plugin</packaging>
