@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 /**
  * swagger-plugin拓展
@@ -279,24 +280,25 @@ public class ParameterProcessorPlugin {
                 for (Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
                     Model model =  entry.getValue();
                     Map<String, Property> properties =  model.getProperties();
-                    for (String key : properties.keySet()) {
-                        Property pValue = properties.get(key);
-                        Object obj = pValue.getExample();
-                        if(obj!=null){
-                            String examples = String.valueOf(obj);
-                            String returnExample = translateExampleDesc(examples,pValue.getDescription());
-                            pValue.setDescription(returnExample);
-                        }
-                        if(StringUtils.isNotEmpty(pValue.getDescription()) && pValue.getDescription().indexOf("&&")!=-1){
-                            String[] values = pValue.getDescription().split("&&");
-                            if (values.length == 2) {
-                                String ptype  = values[0];
-                                String pdes = values[1];
-                                pValue.setDescription(pdes+" 类型为:"+ptype);
+                    if(!CollectionUtils.isEmpty(properties)){
+                        for (String key : properties.keySet()) {
+                            Property pValue = properties.get(key);
+                            Object obj = pValue.getExample();
+                            if(obj!=null){
+                                String examples = String.valueOf(obj);
+                                String returnExample = translateExampleDesc(examples,pValue.getDescription());
+                                pValue.setDescription(returnExample);
+                            }
+                            if(StringUtils.isNotEmpty(pValue.getDescription()) && pValue.getDescription().indexOf("&&")!=-1){
+                                String[] values = pValue.getDescription().split("&&");
+                                if (values.length == 2) {
+                                    String ptype  = values[0];
+                                    String pdes = values[1];
+                                    pValue.setDescription(pdes+" 类型为:"+ptype);
+                                }
                             }
                         }
                     }
-
                     swagger.addDefinition(entry.getKey(), entry.getValue());
                 }
             }
