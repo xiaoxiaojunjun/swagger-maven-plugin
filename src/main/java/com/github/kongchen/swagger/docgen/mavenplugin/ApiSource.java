@@ -136,10 +136,10 @@ public class ApiSource {
 
     @Parameter
     private List<String> modelConverters;
-    
+
     @Parameter
     private boolean skipInheritingClasses = false;
-    
+
     @Parameter
     private String operationIdFormat;
 
@@ -151,22 +151,27 @@ public class ApiSource {
 
     public Set<Class<?>> getValidClasses(Class<? extends Annotation> clazz) {
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
-        
+
         List<String> prefixes = new ArrayList<String>();
         if (getLocations() == null) {
             prefixes.add("");
         } else {
             prefixes.addAll(getLocations());
         }
-        
-        for (String location : prefixes) {
-            Set<Class<?>> c = new Reflections(location).getTypesAnnotatedWith(clazz, true);
-            classes.addAll(c);
 
-            if (!skipInheritingClasses) {
-                Set<Class<?>> inherited = new Reflections(location).getTypesAnnotatedWith(clazz);
-                classes.addAll(inherited);
+        for (String location : prefixes) {
+            try{
+                Set<Class<?>> c = new Reflections(location).getTypesAnnotatedWith(clazz, true);
+                classes.addAll(c);
+
+                if (!skipInheritingClasses) {
+                    Set<Class<?>> inherited = new Reflections(location).getTypesAnnotatedWith(clazz);
+                    classes.addAll(inherited);
+                }
+            }catch(Exception ex){
+               String errorMessage =  ex.getMessage();
             }
+
         }
         return classes;
     }
