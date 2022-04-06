@@ -222,7 +222,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
     }
+    public static String initialsTurnLowercase(String strValue){
+        if(StringUtils.isEmpty(strValue)){
+            return strValue;
+        }
+        int point = strValue.codePointAt(0);
+        if(point < 65 || point > 90){
+            return strValue;
+        }
+        char[] strCharArr = strValue.toCharArray();
+        strCharArr[0] += 32;
+        return String.valueOf(strCharArr);
 
+    }
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (!type.isEnumType() && PrimitiveType.fromType(type) == null) {
             BeanDescription beanDesc = this._mapper.getSerializationConfig().introspect(type);
@@ -325,7 +337,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                                         while(var44.hasNext()) {
                                             Property prop = (Property)var44.next();
-                                            modelProps.put(prop.getName(), prop);
+                                            String pk = prop.getName();
+                                            pk = initialsTurnLowercase(pk);
+                                            modelProps.put(pk, prop);
                                         }
 
                                         model.setProperties(modelProps);
@@ -955,5 +969,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return null;
             }
         }
+
+
     }
 }

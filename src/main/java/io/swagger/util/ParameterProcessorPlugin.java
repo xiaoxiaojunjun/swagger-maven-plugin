@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Example;
 import io.swagger.annotations.ExampleProperty;
-import io.swagger.converter.ModelConverters;
+
 import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
