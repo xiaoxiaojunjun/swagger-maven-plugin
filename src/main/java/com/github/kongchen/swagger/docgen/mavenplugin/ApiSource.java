@@ -160,18 +160,13 @@ public class ApiSource {
         }
 
         for (String location : prefixes) {
-            try{
-                Set<Class<?>> c = new Reflections(location).getTypesAnnotatedWith(clazz, true);
-                classes.addAll(c);
+            Set<Class<?>> c = new Reflections(location).getTypesAnnotatedWith(clazz, true);
+            classes.addAll(c);
 
-                if (!skipInheritingClasses) {
-                    Set<Class<?>> inherited = new Reflections(location).getTypesAnnotatedWith(clazz);
-                    classes.addAll(inherited);
-                }
-            }catch(Exception ex){
-               String errorMessage =  ex.getMessage();
+            if (!skipInheritingClasses) {
+                Set<Class<?>> inherited = new Reflections(location).getTypesAnnotatedWith(clazz);
+                classes.addAll(inherited);
             }
-
         }
         return classes;
     }
@@ -399,14 +394,14 @@ public class ApiSource {
     }
 
     public List<String> getSwaggerExtensions() {
-		return swaggerExtensions;
-	}
+        return swaggerExtensions;
+    }
 
-	public void setSwaggerExtensions(List<String> swaggerExtensions) {
-		this.swaggerExtensions = swaggerExtensions;
-	}
+    public void setSwaggerExtensions(List<String> swaggerExtensions) {
+        this.swaggerExtensions = swaggerExtensions;
+    }
 
-	public String getApiSortComparator() {
+    public String getApiSortComparator() {
         return apiSortComparator;
     }
 
@@ -487,14 +482,14 @@ public class ApiSource {
     }
 
     public String getOperationIdFormat() {
-		return operationIdFormat;
-	}
+        return operationIdFormat;
+    }
 
-	public void setOperationIdFormat(String operationIdFormat) {
-		this.operationIdFormat = operationIdFormat;
-	}
+    public void setOperationIdFormat(String operationIdFormat) {
+        this.operationIdFormat = operationIdFormat;
+    }
 
-	private String emptyToNull(String str) {
+    private String emptyToNull(String str) {
         return StringUtils.isEmpty(str) ? null : str;
     }
 
